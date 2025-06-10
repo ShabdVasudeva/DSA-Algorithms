@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Main{
+public class QuickSort {
 
     public static void swap(int[] nums, int a, int b){
         int temp = nums[a];
