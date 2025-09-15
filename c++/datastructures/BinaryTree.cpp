@@ -1,51 +1,85 @@
-#include <iostream>
-#include <vector>
+
+#include "BinaryTree.hpp"
+#include <queue>
 
 using namespace std;
 
-class Node {
-public:
-    int data;
-    Node* left;
-    Node* right;
-    Node(int data)
-    {
-        this->data = data;
-        left = right = NULL;
-    }
-};
+Node::Node(int data)
+{
+    this->data = data;
+    this->left = this->right = nullptr;
+}
+
+Node::Node(int data, Node* left, Node* right)
+{
+    this->data = data;
+    this->left = left;
+    this->right = right;
+}
 
 static int idx = -1;
 
-Node* initializeBinaryTree(vector<int> preOrderSequence)
+Node* buildTree(const vector<int>& preorder)
 {
     idx++;
-    if (idx >= preOrderSequence.size() || preOrderSequence[idx] == -1)
-    {
-        return NULL;
-    }
-    Node* root = new Node(preOrderSequence[idx]);
-    root->left = initializeBinaryTree(preOrderSequence);
-    root->right = initializeBinaryTree(preOrderSequence);
+    if(preorder[idx] == -1) return nullptr;
+    Node* root = new Node(preorder[idx]);
+    root->left = buildTree(preorder);
+    root->right = buildTree(preorder);
     return root;
 }
 
-void printOutput(Node* root)
-{ // pre-order traversal
-    if (root == NULL)
-    {
-        return;
-    }
-    cout << root-> data << " ";
-    printOutput(root->left);
-    printOutput(root->right);
+void preorder_traversal(Node* root)
+{
+    if(root == nullptr) return;
+    cout << root->data << " ";
+    preorder_traversal(root->left);
+    preorder_traversal(root->right);
 }
 
-int main() 
+void postorder_traversal(Node* root)
 {
-    vector<int> preOrderSequence = {1, 2, -1, -1, 3, 4, -1, -1, 5, -1, -1};
-    Node* root = initializeBinaryTree(preOrderSequence);
-    printOutput(root);
-    cout << "\n";
-    return 0;
+    if(root == nullptr) return;
+    postorder_traversal(root->left);
+    postorder_traversal(root->right);
+    cout << root->data << " ";
+}
+
+void inorder_traversal(Node* root)
+{
+    if(root == nullptr) return;
+    inorder_traversal(root->left);
+    cout << root->data << " ";
+    inorder_traversal(root->right);
+}
+
+void levelorder_traversal(Node* root)
+{
+    queue<Node*> q;
+    q.push(root);
+    while(q.size() > 0)
+    {
+        Node* current = q.front();
+        q.pop();
+        cout << current->data << " ";
+        if (current->left != nullptr)
+        {
+            q.push(current->left);
+        }
+        if (current->right != nullptr)
+        {
+            q.push(current->right);
+        }
+    }
+}
+
+void print_tree(Node *root, Mode mode)
+{
+    switch (mode)
+    {
+        case PREORDER: preorder_traversal(root); cout << "\n"; break;
+        case POSTORDER: postorder_traversal(root); cout << "\n"; break;
+        case INORDER: inorder_traversal(root); cout << "\n"; break;
+        case LEVELORDER: levelorder_traversal(root); cout << "\n"; break;
+    }
 }
